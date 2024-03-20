@@ -13,7 +13,7 @@
     </nav>
 
     @yield('content')
-
+    @yield('scripts')
     <!-- Your additional footer or script content here -->
 </body>
 </html>

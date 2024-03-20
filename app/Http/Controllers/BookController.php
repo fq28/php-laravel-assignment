@@ -6,6 +6,7 @@ use App\Models\Book;
 use App\Models\Publisher;
 use App\Models\Writer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class BookController extends Controller
 {
@@ -107,5 +108,27 @@ class BookController extends Controller
         ]);
 
         return redirect()->route('books.index');
+    }
+
+    public function score(Request $request, $id)
+    {
+        $book = Book::with(['writer', 'publisher'])->findOrFail($id);
+
+        $bookInfo = "{$book->title}, ISBN: {$book->ISBN}, Published: {$book->publication_year}, Price: {$book->price}, Genre: {$book->genre}, Writer: {$book->writer->name}, Publisher: {$book->publisher->name}";
+
+        $response = Http::post('localai:8080/v1/chat/completions', [
+            "model" => "phi-2",
+            "messages" => [
+                [
+                    "role" => "user",
+                    "content" => "Give a score ranging from 1-10 on this book: " . $bookInfo,
+                    "temperature" => 0.1
+                ]
+            ]
+        ]);
+
+        $score = $response->json()['choices'][0]['message']['content'] ?? 'No score available';
+
+        return response()->json(['score' => $score]);
     }
 }

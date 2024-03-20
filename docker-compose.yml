@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
 
@@ -39,5 +39,17 @@ services:
     ports:
       - "5432:5432"
 
+  localai:
+      image: localai/localai:v2.10.1-cublas-cuda12-core
+      command: phi-2
+      ports:
+        - "8080:8080"
+      deploy:
+        resources:
+          reservations:
+            devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
 volumes:
   pgdata: null
