@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./Dockerfile
       args:
-        USER: ${USER}
+        USER: "flowq"
     container_name: app
     volumes:
       - ./:/app
